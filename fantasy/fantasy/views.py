@@ -1,7 +1,18 @@
 from django.http import HttpResponse
 from fantasy.models import Fantasy
 from django.shortcuts import render
+from django_tables2 import RequestConfig
+import django_tables2 as tables
+
+class AveragePlayerPointsTable(tables.Table):
+  name = tables.Column(verbose_name="Player Name", accessor="player_name")
+  fpts = tables.Column(verbose_name="Avg Fpts", accessor="avg_fpts")
 
 def index(request):
-  qs = Fantasy.objects.raw('SELECT player_name, round(avg(fpts),2) as avg_fpts FROM fantasy GROUP BY player_name ORDER BY avg_fpts DESC')
-  return render(request, "players.html", {"players": qs})
+  query = """SELECT player_name, round(avg(fpts),2) as avg_fpts
+             FROM fantasy
+             GROUP BY player_name
+             ORDER BY avg_fpts DESC"""
+  table = AveragePlayerPointsTable(Fantasy.objects.raw(query))
+  RequestConfig(request).configure(table)
+  return render(request, "players.html", {"players": table})
