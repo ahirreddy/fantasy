@@ -8,6 +8,8 @@ class PlayerPointsTable(tables.Table):
   name = tables.Column(verbose_name="Player Name", accessor="player_name")
   avg_fpts = tables.Column(verbose_name="Avg Fpts", accessor="avg_fpts")
   total_fpts = tables.Column(verbose_name="Total Fpts", accessor="total_fpts")
+  class Meta:
+    attrs = {"class": "paleblue"}
 
 def index(request):
   query = """SELECT player_name, round(avg(fpts),2) as avg_fpts, sum(fpts) as total_fpts
