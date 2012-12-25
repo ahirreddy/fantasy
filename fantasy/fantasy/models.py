@@ -10,7 +10,7 @@
 from django.db import models
 
 class Fantasy(models.Model):
-    player_name = models.TextField(blank=True)
+    player_name = models.TextField(blank=True, primary_key=True)
     fteam = models.IntegerField(null=True, blank=True)
     fgm = models.IntegerField(null=True, blank=True)
     fga = models.IntegerField(null=True, blank=True)
