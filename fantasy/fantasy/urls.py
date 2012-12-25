@@ -4,7 +4,10 @@ from django.conf.urls import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
+from fantasy import views
+
 urlpatterns = patterns('',
+    url(r'^$', views.index, name='index'),
     # Examples:
     # url(r'^$', 'fantasy.views.home', name='home'),
     # url(r'^fantasy/', include('fantasy.foo.urls')),
