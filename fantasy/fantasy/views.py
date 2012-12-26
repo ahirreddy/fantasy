@@ -5,10 +5,10 @@ from django_tables2 import RequestConfig
 import django_tables2 as tables
 
 class PlayerPointsTable(tables.Table):
-  name = tables.Column(verbose_name="Player Name", accessor="player_name")
-  avg_fpts = tables.Column(verbose_name="Avg Fpts", accessor="avg_fpts")
-  total_fpts = tables.Column(verbose_name="Total Fpts", accessor="total_fpts")
-  games = tables.Column(verbose_name="Games Played", accessor="games_played")
+  player_name = tables.Column(verbose_name="Player Name")
+  avg_fpts = tables.Column(verbose_name="Avg Fpts")
+  total_fpts = tables.Column(verbose_name="Total Fpts")
+  games_played = tables.Column(verbose_name="Games Played")
 
   class Meta:
     attrs = {"class": "paleblue"}
