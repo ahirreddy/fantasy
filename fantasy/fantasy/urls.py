@@ -8,6 +8,7 @@ from fantasy import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
+    url(r'^teams/', views.team_average, name='team_average')
     # Examples:
     # url(r'^$', 'fantasy.views.home', name='home'),
     # url(r'^fantasy/', include('fantasy.foo.urls')),
