@@ -6,8 +6,9 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
     </head>
     <body>
-      {% for name, data in teams %}
+      {% for name, team_average, data in teams %}
         <h3>{{ name }}</h3>
+        <h2>{{ team_average }}</h2>
         {% render_table data %}
       {% endfor %}
     </body>

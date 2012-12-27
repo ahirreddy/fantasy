@@ -79,13 +79,15 @@ def team_player_average_total(request):
                GROUP BY F.player_name""" % team_id
 
     data = []
+    avg_total = 0
     for p in Fantasy.objects.raw(query):
       data.append({'player_name' : p.player_name,
                    'avg_fpts' : p.avg_fpts})
+      avg_total += p.avg_fpts
 
     table = PlayerAveragesTable(data)
     RequestConfig(request).configure(table)
-    tables.append(("team%i" % team_id, table))
+    tables.append(("team%i" % team_id, avg_total, table))
   return render(request, "teams.html", {"teams" : tables})
 
 def team_player_average_total_on_team(request):
@@ -99,12 +101,14 @@ def team_player_average_total_on_team(request):
                GROUP BY F.player_name""" % (team_id, team_id)
 
     data = []
+    avg_total = 0
     for p in Fantasy.objects.raw(query):
       data.append({'player_name' : p.player_name,
                    'avg_fpts' : p.avg_fpts})
+      avg_total += p.avg_fpts
 
     table = PlayerAveragesTable(data)
     RequestConfig(request).configure(table)
-    tables.append(("team%i" % team_id, table))
+    tables.append(("team%i" % team_id, avg_total, table))
 
   return render(request, "teams.html", {"teams" : tables})
