@@ -32,7 +32,7 @@ def index(request):
 
   players = []
   for p in Fantasy.objects.raw(query):
-    players.append({"player_name" : p.player,
+    players.append({"player_name" : p.player_name,
                     "avg_fpts" : p.avg_fpts,
                     "total_fpts" : p.total_fpts,
                     "games_played" : p.games_played})
