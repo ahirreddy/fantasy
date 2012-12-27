@@ -107,6 +107,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/Users/ahirreddy/Projects/fantasy/fantasy/fantasy/templates',
+    os.path.join(SITE_ROOT, 'fantasy/fantasy/templates'),
 )
 
 INSTALLED_APPS = (
