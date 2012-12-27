@@ -63,8 +63,8 @@ def team_average(request):
   return render(request, "players.html", {"players": table})
 
 class PlayerAveragesTable(tables.Table):
-  player_name = tables.Column(verbose_name="Team ID")
-  avg_fpts = tables.Column(verbose_name="Team Avg")
+  player_name = tables.Column(verbose_name="Player Name")
+  avg_fpts = tables.Column(verbose_name="FPTS Avg")
 
   class Meta:
     attrs = {"class": "paleblue"}
@@ -86,18 +86,22 @@ def team_player_average_total(request):
   return render(request, "players.html", {"players": table})
 
 def team_player_average_total_on_team(request):
-  query = """SELECT F.player_name as player_name, ROUND(AVG(F.fpts),2) as avg_fpts
-             FROM fantasy F, roster R
-             WHERE F.player_name = R.player_name
-                   AND R.fteam = %i
-                   AND F.fteam = %i
-             GROUP BY F.player_name""" % (2, 2)
+  tables = []
+  for team_id in xrange(1,9):
+    query = """SELECT F.player_name as player_name, ROUND(AVG(F.fpts),2) as avg_fpts
+               FROM fantasy F, roster R
+               WHERE F.player_name = R.player_name
+                     AND R.fteam = %i
+                     AND F.fteam = %i
+               GROUP BY F.player_name""" % (team_id, team_id)
 
-  data = []
-  for p in Fantasy.objects.raw(query):
-    data.append({'player_name' : p.player_name,
-                 'avg_fpts' : p.avg_fpts})
+    data = []
+    for p in Fantasy.objects.raw(query):
+      data.append({'player_name' : p.player_name,
+                   'avg_fpts' : p.avg_fpts})
 
-  table = PlayerAveragesTable(data)
-  RequestConfig(request).configure(table)
-  return render(request, "players.html", {"players": table})
+    table = PlayerAveragesTable(data)
+    RequestConfig(request).configure(table)
+    tables.append(table)
+
+  return render(request, "teams.html", {"team1": tables[0], "team2" : tables[1]})
