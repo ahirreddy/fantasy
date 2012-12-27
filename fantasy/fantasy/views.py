@@ -84,3 +84,20 @@ def team_player_average_total(request):
   table = PlayerAveragesTable(data)
   RequestConfig(request).configure(table)
   return render(request, "players.html", {"players": table})
+
+def team_player_average_total_on_team(request):
+  query = """SELECT F.player_name as player_name, ROUND(AVG(F.fpts),2) as avg_fpts
+             FROM fantasy F, roster R
+             WHERE F.player_name = R.player_name
+                   AND R.fteam = %i
+                   AND F.fteam = %i
+             GROUP BY F.player_name""" % (2, 2)
+
+  data = []
+  for p in Fantasy.objects.raw(query):
+    data.append({'player_name' : p.player_name,
+                 'avg_fpts' : p.avg_fpts})
+
+  table = PlayerAveragesTable(data)
+  RequestConfig(request).configure(table)
+  return render(request, "players.html", {"players": table})
