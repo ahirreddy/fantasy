@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from fantasy.models import Fantasy
 from django.shortcuts import render
 from django_tables2 import RequestConfig
+from django.db.models.query import QuerySet
 import django_tables2 as tables
 
 class PlayerPointsTable(tables.Table):
@@ -28,10 +29,17 @@ def index(request):
              FROM fantasy
              GROUP BY player_name
              ORDER BY avg_fpts DESC"""
-  table = PlayerPointsTable(Fantasy.objects.raw(query))
+
+  players = []
+  for p in Fantasy.objects.raw(query):
+    players.append({"player_name" : p.player,
+                    "avg_fpts" : p.avg_fpts,
+                    "total_fpts" : p.total_fpts,
+                    "games_played" : p.games_played})
+
+  table = PlayerPointsTable(players)
   RequestConfig(request).configure(table)
   return render(request, "players.html", {"players": table})
-
 
 def team_average(request):
   from django.db import connection, transaction
