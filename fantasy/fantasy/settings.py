@@ -103,12 +103,12 @@ ROOT_URLCONF = 'fantasy.urls'
 WSGI_APPLICATION = 'fantasy.wsgi.application'
 
 import os
+templateDir = os.path.dirname(__file__)
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/Users/ahirreddy/Projects/fantasy/fantasy/fantasy/templates',
-    os.path.join(SITE_ROOT, 'fantasy/fantasy/templates'),
+    os.path.join(templateDir, 'templates'),
 )
 
 INSTALLED_APPS = (
