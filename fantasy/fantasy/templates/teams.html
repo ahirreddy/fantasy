@@ -6,13 +6,9 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
     </head>
     <body>
-        {% render_table team1 %}
-        {% render_table team2 %}
-        {% render_table team3 %}
-        {% render_table team4 %}
-        {% render_table team5 %}
-        {% render_table team6 %}
-        {% render_table team7 %}
-        {% render_table team8 %}
+      {% for name, data in teams %}
+        <h3>{{ name }}</h3>
+        {% render_table data %}
+      {% endfor %}
     </body>
 </html>
