@@ -102,6 +102,7 @@ ROOT_URLCONF = 'fantasy.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'fantasy.wsgi.application'
 
+import os
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
