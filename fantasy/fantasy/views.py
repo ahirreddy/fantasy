@@ -24,8 +24,11 @@ class TeamAveragesTable(tables.Table):
 def index(request):
   return HttpResponse("""
                       <a href="all_players">All Players</a>
+                      <br />
                       <a href="teams">All Teams Average(Not Working)</a>
+                      <br />
                       <a href="team_average">Roster Averages (Total)</a>
+                      <br />
                       <a href="on_team_average">Roster Averages (While on Team)</a>
                       """)
 
