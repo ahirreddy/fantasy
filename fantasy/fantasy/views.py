@@ -25,7 +25,7 @@ def index(request):
   return HttpResponse("""
                       <a href="all_players">All Players</a>
                       <br />
-                      <a href="teams">All Teams Average(Not Working)</a>
+                      <a href="multiple_team_players">Players who have been on multiple teams</a>
                       <br />
                       <a href="team_average">Roster Averages (Total)</a>
                       <br />
@@ -52,30 +52,38 @@ def all_players(request):
   RequestConfig(request).configure(table)
   return render(request, "players.html", {"players": table})
 
-def team_average(request):
+def multiple_team_players(request):
   from django.db import connection, transaction
   cursor = connection.cursor()
   data = []
 
-  for team_id in xrange(1,9):
-    query = """SELECT SUM(avg_fpts) as team_avg
-               FROM (SELECT player_name, ROUND(AVG(fpts),2) as avg_fpts, MAX(period_id)
-                     FROM fantasy
-                     GROUP BY player_name
-                     HAVING fteam = %i -- Change to team you want to find
-                     ORDER BY period_id DESC
-                     LIMIT 13);""" % team_id
-    cursor.execute(query)
-    team_avg = cursor.fetchone()[0]
-    data.append({"team_id" : team_id, "team_avg" : team_avg})
+  query = """SELECT player_name, round(avg(fpts),2) as avg_fpts, fteam
+             FROM fantasy
+             GROUP BY player_name, fteam
+             HAVING player_name IN (SELECT player_name
+                                    FROM fantasy
+                                    GROUP BY player_name
+                                    HAVING COUNT(DISTINCT fteam) > 1)
+            ORDER BY player_name, avg_fpts DESC;"""
 
-  table = TeamAveragesTable(data)
+  for p in Fantasy.objects.raw(query):
+    data.append({'player_name' : p.player_name,
+                 'avg_fpts' : p.avg_fpts,
+                 'fteam' : p.fteam})
+
+  table = MultiplePlayerAveragesTable(data)
   RequestConfig(request).configure(table)
   return render(request, "players.html", {"players": table})
 
 class PlayerAveragesTable(tables.Table):
   player_name = tables.Column(verbose_name="Player Name")
   avg_fpts = tables.Column(verbose_name="FPTS Avg")
+
+  class Meta:
+    attrs = {"class": "paleblue"}
+
+class MultiplePlayerAveragesTable(PlayerAveragesTable):
+  fteam = tables.Column(verbose_name="Fteam")
 
   class Meta:
     attrs = {"class": "paleblue"}
