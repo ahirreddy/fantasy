@@ -22,6 +22,14 @@ class TeamAveragesTable(tables.Table):
     attrs = {"class": "paleblue"}
 
 def index(request):
+  return HttpResponse("""
+                      <a href="all_players">All Players</a>
+                      <a href="teams">All Teams Average(Not Working)</a>
+                      <a href="team_average">Roster Averages (Total)</a>
+                      <a href="on_team_average">Roster Averages (While on Team)</a>
+                      """)
+
+def all_players(request):
   query = """SELECT player_name,
                     ROUND(AVG(fpts),2) as avg_fpts,
                     SUM(fpts) as total_fpts,

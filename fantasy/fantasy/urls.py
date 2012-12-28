@@ -8,6 +8,7 @@ from fantasy import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
+    url(r'^all_players/', views.all_players, name='all_players'),
     url(r'^teams/', views.team_average, name='team_average'),
     url(r'^team_average/', views.team_player_average_total, name='team_player_average_total'),
     url(r'^on_team_average/', views.team_player_average_total_on_team, name='team_player_average_total_on_team'),
