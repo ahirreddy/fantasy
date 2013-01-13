@@ -30,6 +30,8 @@ def index(request):
                       <a href="team_average">Roster Averages (Total)</a>
                       <br />
                       <a href="on_team_average">Roster Averages (While on Team)</a>
+                      <br />
+                      <a href="per_minute_fpts">Fantasy Points Per Minute</a>
                       """)
 
 def all_players(request):
