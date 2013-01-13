@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^multiple_team_players/', views.multiple_team_players, name='multiple_team_players'),
     url(r'^team_average/', views.team_player_average_total, name='team_player_average_total'),
     url(r'^on_team_average/', views.team_player_average_total_on_team, name='team_player_average_total_on_team'),
+    url(r'^per_minute_fpts/', views.per_minute_fpts, name='per_minute_fpts'),
     # Examples:
     # url(r'^$', 'fantasy.views.home', name='home'),
     # url(r'^fantasy/', include('fantasy.foo.urls')),

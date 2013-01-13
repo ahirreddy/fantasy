@@ -136,3 +136,26 @@ def team_player_average_total_on_team(request):
     tables.append(("team%i" % team_id, avg_total, table))
 
   return render(request, "teams.html", {"teams" : tables})
+
+class PerMinuteTable(tables.Table):
+  player_name = tables.Column(verbose_name="Player Name")
+  per_minute_fpts = tables.Column(verbose_name="Avg Fpts")
+
+  class Meta:
+    attrs = {"class": "paleblue"}
+
+
+def per_minute_fpts(request):
+    query = """SELECT player_name, ROUND(CAST(CAST(total_fpts as float)/total_min as numeric),3) as per_minute_fpts
+               FROM (SELECT player_name, SUM(fpts) as total_fpts, SUM(min) as total_min
+                     FROM fantasy
+                     GROUP BY player_name) as totals
+               WHERE total_min > 48
+               ORDER BY per_minute_fpts DESC;"""
+    players = []
+    for p in Fantasy.objects.raw(query):
+      players.append({'player_name' : p.player_name,
+                      'per_minute_fpts' : p.per_minute_fpts})
+    table = PerMinuteTable(players)
+    RequestConfig(request).configure(table)
+    return render(request, "players.html", {"players": table})
