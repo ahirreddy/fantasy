@@ -92,7 +92,8 @@ class MultiplePlayerAveragesTable(PlayerAveragesTable):
 def team_player_average_total(request):
   tables = []
   for team_id in xrange(1,9):
-    query = """SELECT F.player_name as player_name, ROUND(AVG(F.fpts),2) as avg_fpts
+    query = """SELECT F.player_name as player_name, ROUND(AVG(F.fpts),2) as avg_fpts,
+                      COUNT(*) as num_games
                FROM fantasy F, roster R
                WHERE F.player_name = R.player_name
                      AND R.fteam = %i
@@ -102,7 +103,8 @@ def team_player_average_total(request):
     avg_total = 0
     for p in Fantasy.objects.raw(query):
       data.append({'player_name' : p.player_name,
-                   'avg_fpts' : p.avg_fpts})
+                   'avg_fpts' : p.avg_fpts,
+                   'num_games' : p.num_games})
       avg_total += p.avg_fpts
 
     table = PlayerAveragesTable(data)
