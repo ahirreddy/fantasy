@@ -32,6 +32,8 @@ def index(request):
                       <a href="on_team_average">Roster Averages (While on Team)</a>
                       <br />
                       <a href="per_minute_fpts">Fantasy Points Per Minute</a>
+                      <br />
+                      <a href="point_guards">Point Guard Rankings</a>
                       """)
 
 def all_players(request):
@@ -159,5 +161,33 @@ def per_minute_fpts(request):
       players.append({'player_name' : p.player_name,
                       'per_minute_fpts' : p.per_minute_fpts})
     table = PerMinuteTable(players)
+    RequestConfig(request).configure(table)
+    return render(request, "players.html", {"players": table})
+
+class RankingTable(tables.Table):
+  rank = tables.Column(verbose_name="Rank")
+  player_name = tables.Column(verbose_name="Player Name")
+  avg_fpts = tables.Column(verbose_name="Avg Fpts")
+
+  class Meta:
+    attrs = {"class": "paleblue"}
+
+def point_guards(request):
+    query = """ SELECT RANK() OVER (ORDER BY fpts DESC) as rank, *
+                FROM (
+                      SELECT F.player_name, ROUND(AVG(F.fpts),2) as fpts
+                      FROM fantasy F, roster R
+                      WHERE F.player_name = R.player_name
+                            AND R.positions LIKE '%%PG%%'
+                      GROUP BY F.player_name
+                      ORDER BY fpts DESC
+                     ) as subquery
+                """
+    players = []
+    for p in Fantasy.objects.raw(query):
+      players.append({'player_name' : p.player_name,
+                      'avg_fpts' : p.fpts,
+                      'rank' : p.rank})
+    table = RankingTable(players)
     RequestConfig(request).configure(table)
     return render(request, "players.html", {"players": table})
