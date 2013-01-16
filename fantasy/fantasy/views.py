@@ -34,6 +34,8 @@ def index(request):
                       <a href="per_minute_fpts">Fantasy Points Per Minute</a>
                       <br />
                       <a href="point_guards">Point Guard Rankings</a>
+                      <br />
+                      <a href="player_rankings">All Player Rankings/Positions</a>
                       """)
 
 def all_players(request):
