@@ -168,14 +168,33 @@ class RankingTable(tables.Table):
   rank = tables.Column(verbose_name="Rank")
   player_name = tables.Column(verbose_name="Player Name")
   avg_fpts = tables.Column(verbose_name="Avg Fpts")
+  positions = tables.Column(verbose_name="Positions")
 
   class Meta:
     attrs = {"class": "paleblue"}
 
+def player_rankings(request):
+    query = """ SELECT *, RANK() OVER (ORDER BY avg DESC) as rank
+                FROM (SELECT F.player_name, ROUND(AVG(F.fpts),2) as avg, MAX(R.positions) as positions
+                     FROM fantasy F, roster R
+                     WHERE F.player_name = R.player_name
+                     GROUP BY F.player_name
+                     ORDER BY avg DESC) as subquery
+           """
+    players = []
+    for p in Fantasy.objects.raw(query):
+      players.append({'player_name' : p.player_name,
+                      'avg_fpts' : p.fpts,
+                      'rank' : p.rank,
+                      'positions' : p.positions})
+    table = RankingTable(players)
+    RequestConfig(request).configure(table)
+    return render(request, "players.html", {"players": table})
+
 def point_guards(request):
     query = """ SELECT RANK() OVER (ORDER BY fpts DESC) as rank, *
                 FROM (
-                      SELECT F.player_name, ROUND(AVG(F.fpts),2) as fpts
+                      SELECT F.player_name, ROUND(AVG(F.fpts),2) as fpts, MAX(R.positions) as positions
                       FROM fantasy F, roster R
                       WHERE F.player_name = R.player_name
                             AND R.positions LIKE '%%PG%%'
@@ -187,7 +206,8 @@ def point_guards(request):
     for p in Fantasy.objects.raw(query):
       players.append({'player_name' : p.player_name,
                       'avg_fpts' : p.fpts,
-                      'rank' : p.rank})
+                      'rank' : p.rank,
+                      'positions' : p.positions})
     table = RankingTable(players)
     RequestConfig(request).configure(table)
     return render(request, "players.html", {"players": table})
