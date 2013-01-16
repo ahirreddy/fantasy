@@ -186,7 +186,7 @@ def player_rankings(request):
     players = []
     for p in Fantasy.objects.raw(query):
       players.append({'player_name' : p.player_name,
-                      'avg_fpts' : p.fpts,
+                      'avg_fpts' : p.avg,
                       'rank' : p.rank,
                       'positions' : p.positions})
     table = RankingTable(players)
