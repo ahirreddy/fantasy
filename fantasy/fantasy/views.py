@@ -205,11 +205,14 @@ def point_guards(request):
                      ) as subquery
                 """
     players = []
+    total_fpts = 0
     for p in Fantasy.objects.raw(query):
+      total_fpts += p.fpts
       players.append({'player_name' : p.player_name,
                       'avg_fpts' : p.fpts,
                       'rank' : p.rank,
                       'positions' : p.positions})
+    position_average = "%s average is %.2f" % ('PG', round(total_fpts/len(players),2))
     table = RankingTable(players)
     RequestConfig(request).configure(table)
-    return render(request, "players.html", {"players": table})
+    return render(request, "players.html", {"players": table, "average": position_average})
