@@ -1,0 +1,15 @@
+{# tutorial/templates/players.html #}
+{% load render_table from django_tables2 %}
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
+    </head>
+    <body>
+      {% for position, position_average, data in category %}
+        <h3>{{ position }}</h3>
+        <h2>Average: {{ position_average }}</h2>
+        {% render_table data %}
+      {% endfor %}
+    </body>
+</html>

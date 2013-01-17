@@ -194,16 +194,18 @@ def player_rankings(request):
     return render(request, "players.html", {"players": table})
 
 def point_guards(request):
+  tables = []
+  for position in ('PG', 'SG', 'SF', 'PF', 'C'):
     query = """ SELECT RANK() OVER (ORDER BY fpts DESC) as rank, *
                 FROM (
                       SELECT F.player_name, ROUND(AVG(F.fpts),2) as fpts, MAX(R.positions) as positions
                       FROM fantasy F, roster R
                       WHERE F.player_name = R.player_name
-                            AND R.positions LIKE '%%PG%%'
+                            AND R.positions LIKE '%%{0}%%'
                       GROUP BY F.player_name
                       ORDER BY fpts DESC
                      ) as subquery
-                """
+                """.format(position)
     players = []
     total_fpts = 0
     for p in Fantasy.objects.raw(query):
@@ -212,7 +214,9 @@ def point_guards(request):
                       'avg_fpts' : p.fpts,
                       'rank' : p.rank,
                       'positions' : p.positions})
-    position_average = "%s average is %.2f" % ('PG', round(total_fpts/len(players),2))
+    position_average = round(total_fpts/len(players),2)
     table = RankingTable(players)
     RequestConfig(request).configure(table)
-    return render(request, "players.html", {"players": table, "average": position_average})
+    tables.append((position, position_average, table))
+
+  return render(request, "positions.html", {"category" : tables})
