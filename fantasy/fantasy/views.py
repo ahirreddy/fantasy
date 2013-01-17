@@ -33,7 +33,7 @@ def index(request):
                       <br />
                       <a href="per_minute_fpts">Fantasy Points Per Minute</a>
                       <br />
-                      <a href="point_guards">Point Guard Rankings</a>
+                      <a href="per_position_rankings"><b>Per Position Rankings</b></a>
                       <br />
                       <a href="player_rankings">All Player Rankings/Positions</a>
                       """)
@@ -193,7 +193,7 @@ def player_rankings(request):
     RequestConfig(request).configure(table)
     return render(request, "players.html", {"players": table})
 
-def point_guards(request):
+def per_position_rankings(request):
   tables = []
   for position in ('PG', 'SG', 'SF', 'PF', 'C'):
     query = """ SELECT RANK() OVER (ORDER BY fpts DESC) as rank, *
