@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^per_minute_fpts/', views.per_minute_fpts, name='per_minute_fpts'),
     url(r'^per_position_rankings/', views.per_position_rankings, name='per_position_rankings'),
     url(r'^player_rankings/', views.player_rankings, name='player_rankings'),
+    url(r'^individual_player/', views.individual_player, name='individual_player'),
     # Examples:
     # url(r'^$', 'fantasy.views.home', name='home'),
     # url(r'^fantasy/', include('fantasy.foo.urls')),

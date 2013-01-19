@@ -168,7 +168,7 @@ def per_minute_fpts(request):
 
 class RankingTable(tables.Table):
   rank = tables.Column(verbose_name="Rank")
-  player_name = tables.Column(verbose_name="Player Name")
+  player_name = tables.TemplateColumn('<a href="{{record.player_name}}">{{record.player_name}}</a>', verbose_name="Player Name")
   avg_fpts = tables.Column(verbose_name="Avg Fpts")
   positions = tables.Column(verbose_name="Positions")
 
@@ -220,3 +220,11 @@ def per_position_rankings(request):
     tables.append((position, position_average, table))
 
   return render(request, "positions.html", {"category" : tables})
+
+class IndividualPlayerTable(tables.Table):
+  class Meta:
+    attrs = {"class": "paleblue"}
+
+def individual_player(request):
+  qs = Fantasy.objects.filter(player_name = 'Kevin Durant').order_by('-period_id')
+  return render(request, "players.html", {"players" : qs})
