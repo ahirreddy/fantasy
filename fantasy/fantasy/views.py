@@ -76,9 +76,7 @@ def team_player_average_total_on_team(request):
                      AND F.fteam = %i
                GROUP BY F.player_name""" % (team_id, team_id)
     qs = Fantasy.objects.raw(query)
-    avg_total = 0
-    for p in qs:
-      avg_total += p.avg_fpts
+    avg_total = sum([p.avg_fpts for p in qs])
     table = PlayerAveragesTable(qs)
     RequestConfig(request).configure(table)
     tables.append(("team%i" % team_id, avg_total, table))
@@ -122,9 +120,7 @@ def per_position_rankings(request):
                      ) as subquery
                 """.format(position)
     qs = Fantasy.objects.raw(query)
-    total_fpts = 0
-    for p in qs:
-      total_fpts += p.avg_fpts
+    total_fpts = sum([p.avg_fpts for p in qs])
     position_average = round(total_fpts/len(list(qs)),2)
     table = RankingTable(qs)
     RequestConfig(request).configure(table)
