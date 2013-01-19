@@ -30,23 +30,11 @@ def all_players(request):
              FROM fantasy
              GROUP BY player_name
              ORDER BY avg_fpts DESC"""
-
-  players = []
-  for p in Fantasy.objects.raw(query):
-    players.append({"player_name" : p.player_name,
-                    "avg_fpts" : p.avg_fpts,
-                    "total_fpts" : p.total_fpts,
-                    "games_played" : p.games_played})
-
-  table = PlayerPointsTable(players)
+  table = PlayerPointsTable(Fantasy.objects.raw(query))
   RequestConfig(request).configure(table)
   return render(request, "players.html", {"players": table})
 
 def multiple_team_players(request):
-  from django.db import connection, transaction
-  cursor = connection.cursor()
-  data = []
-
   query = """SELECT player_name, round(avg(fpts),2) as avg_fpts, fteam
              FROM fantasy
              GROUP BY player_name, fteam
@@ -55,13 +43,7 @@ def multiple_team_players(request):
                                     GROUP BY player_name
                                     HAVING COUNT(DISTINCT fteam) > 1)
             ORDER BY player_name, avg_fpts DESC;"""
-
-  for p in Fantasy.objects.raw(query):
-    data.append({'player_name' : p.player_name,
-                 'avg_fpts' : p.avg_fpts,
-                 'fteam' : p.fteam})
-
-  table = MultiplePlayerAveragesTable(data)
+  table = MultiplePlayerAveragesTable(Fantasy.objects.raw(query))
   RequestConfig(request).configure(table)
   return render(request, "players.html", {"players": table})
 
@@ -74,16 +56,11 @@ def team_player_average_total(request):
                WHERE F.player_name = R.player_name
                      AND R.fteam = %i
                GROUP BY F.player_name""" % team_id
-
-    data = []
+    qs = Fantasy.objects.raw(query)
     avg_total = 0
-    for p in Fantasy.objects.raw(query):
-      data.append({'player_name' : p.player_name,
-                   'avg_fpts' : p.avg_fpts,
-                   'num_games' : p.num_games})
+    for p in qs:
       avg_total += p.avg_fpts
-
-    table = PlayerAveragesTable(data)
+    table = PlayerAveragesTable(qs)
     RequestConfig(request).configure(table)
     tables.append(("team%i" % team_id, avg_total, table))
   return render(request, "teams.html", {"teams" : tables})
@@ -98,16 +75,11 @@ def team_player_average_total_on_team(request):
                      AND R.fteam = %i
                      AND F.fteam = %i
                GROUP BY F.player_name""" % (team_id, team_id)
-
-    data = []
+    qs = Fantasy.objects.raw(query)
     avg_total = 0
-    for p in Fantasy.objects.raw(query):
-      data.append({'player_name' : p.player_name,
-                   'avg_fpts' : p.avg_fpts,
-                   'num_games' : p.num_games})
+    for p in qs:
       avg_total += p.avg_fpts
-
-    table = PlayerAveragesTable(data)
+    table = PlayerAveragesTable(qs)
     RequestConfig(request).configure(table)
     tables.append(("team%i" % team_id, avg_total, table))
 
@@ -120,55 +92,41 @@ def per_minute_fpts(request):
                      GROUP BY player_name) as totals
                WHERE total_min > 48
                ORDER BY per_minute_fpts DESC;"""
-    players = []
-    for p in Fantasy.objects.raw(query):
-      players.append({'player_name' : p.player_name,
-                      'per_minute_fpts' : p.per_minute_fpts})
-    table = PerMinuteTable(players)
+    table = PerMinuteTable(Fantasy.objects.raw(query))
     RequestConfig(request).configure(table)
     return render(request, "players.html", {"players": table})
 
 def player_rankings(request):
-    query = """ SELECT *, RANK() OVER (ORDER BY avg DESC) as rank
-                FROM (SELECT F.player_name, ROUND(AVG(F.fpts),2) as avg, MAX(R.positions) as positions
+    query = """ SELECT *, RANK() OVER (ORDER BY avg_fpts DESC) as rank
+                FROM (SELECT F.player_name, ROUND(AVG(F.fpts),2) as avg_fpts, MAX(R.positions) as positions
                      FROM fantasy F, roster R
                      WHERE F.player_name = R.player_name
                      GROUP BY F.player_name
-                     ORDER BY avg DESC) as subquery
+                     ORDER BY avg_fpts DESC) as subquery
            """
-    players = []
-    for p in Fantasy.objects.raw(query):
-      players.append({'player_name' : p.player_name,
-                      'avg_fpts' : p.avg,
-                      'rank' : p.rank,
-                      'positions' : p.positions})
-    table = RankingTable(players)
+    table = RankingTable(Fantasy.objects.raw(query))
     RequestConfig(request).configure(table)
     return render(request, "players.html", {"players": table})
 
 def per_position_rankings(request):
   tables = []
   for position in ('PG', 'SG', 'SF', 'PF', 'C'):
-    query = """ SELECT RANK() OVER (ORDER BY fpts DESC) as rank, *
+    query = """ SELECT RANK() OVER (ORDER BY avg_fpts DESC) as rank, *
                 FROM (
-                      SELECT F.player_name, ROUND(AVG(F.fpts),2) as fpts, MAX(R.positions) as positions
+                      SELECT F.player_name, ROUND(AVG(F.fpts),2) as avg_fpts, MAX(R.positions) as positions
                       FROM fantasy F, roster R
                       WHERE F.player_name = R.player_name
                             AND R.positions LIKE '%%{0}%%'
                       GROUP BY F.player_name
-                      ORDER BY fpts DESC
+                      ORDER BY avg_fpts DESC
                      ) as subquery
                 """.format(position)
-    players = []
+    qs = Fantasy.objects.raw(query)
     total_fpts = 0
-    for p in Fantasy.objects.raw(query):
-      total_fpts += p.fpts
-      players.append({'player_name' : p.player_name,
-                      'avg_fpts' : p.fpts,
-                      'rank' : p.rank,
-                      'positions' : p.positions})
-    position_average = round(total_fpts/len(players),2)
-    table = RankingTable(players)
+    for p in qs:
+      total_fpts += p.avg_fpts
+    position_average = round(total_fpts/len(list(qs)),2)
+    table = RankingTable(qs)
     RequestConfig(request).configure(table)
     tables.append((position, position_average, table))
 
