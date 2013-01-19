@@ -6,7 +6,7 @@ from django.db.models.query import QuerySet
 import django_tables2 as tables
 
 class PlayerPointsTable(tables.Table):
-  player_name = tables.Column(verbose_name="Player Name")
+  player_name = tables.TemplateColumn('<a href="/individual_player?player_name={{record.player_name}}">{{record.player_name}}</a>', verbose_name="Player Name").Column(verbose_name="Player Name")
   avg_fpts = tables.Column(verbose_name="Avg Fpts")
   total_fpts = tables.Column(verbose_name="Total Fpts")
   games_played = tables.Column(verbose_name="Games Played")
@@ -82,7 +82,7 @@ def multiple_team_players(request):
   return render(request, "players.html", {"players": table})
 
 class PlayerAveragesTable(tables.Table):
-  player_name = tables.Column(verbose_name="Player Name")
+  player_name = tables.TemplateColumn('<a href="/individual_player?player_name={{record.player_name}}">{{record.player_name}}</a>', verbose_name="Player Name").Column(verbose_name="Player Name")
   avg_fpts = tables.Column(verbose_name="FPTS Avg")
   num_games = tables.Column(verbose_name="# Games")
 
@@ -144,7 +144,7 @@ def team_player_average_total_on_team(request):
   return render(request, "teams.html", {"teams" : tables})
 
 class PerMinuteTable(tables.Table):
-  player_name = tables.Column(verbose_name="Player Name")
+  player_name = tables.TemplateColumn('<a href="/individual_player?player_name={{record.player_name}}">{{record.player_name}}</a>', verbose_name="Player Name").Column(verbose_name="Player Name")
   per_minute_fpts = tables.Column(verbose_name="Avg Fpts")
 
   class Meta:
