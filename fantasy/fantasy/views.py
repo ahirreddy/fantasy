@@ -226,6 +226,9 @@ class IndividualPlayerTable(tables.Table):
     attrs = {"class": "paleblue"}
 
 def individual_player(request):
-  player_name = request.GET['player_name']
-  qs = Fantasy.objects.filter(player_name = player_name).order_by('-period_id')
-  return render(request, "players.html", {"players" : qs})
+  if request.method == 'GET' and 'player_name' in request.GET:
+    player_name = request.GET['player_name']
+    qs = Fantasy.objects.filter(player_name = player_name).order_by('-period_id')
+    return render(request, "players.html", {"players" : qs})
+  else:
+    return HttpResponse("Must Provide Player Name")
