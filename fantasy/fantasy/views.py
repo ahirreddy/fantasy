@@ -168,7 +168,7 @@ def per_minute_fpts(request):
 
 class RankingTable(tables.Table):
   rank = tables.Column(verbose_name="Rank")
-  player_name = tables.TemplateColumn('<a href="{{record.player_name}}">{{record.player_name}}</a>', verbose_name="Player Name")
+  player_name = tables.TemplateColumn('<a href="/individual_player?player_name={{record.player_name}}">{{record.player_name}}</a>', verbose_name="Player Name")
   avg_fpts = tables.Column(verbose_name="Avg Fpts")
   positions = tables.Column(verbose_name="Positions")
 
@@ -226,5 +226,6 @@ class IndividualPlayerTable(tables.Table):
     attrs = {"class": "paleblue"}
 
 def individual_player(request):
-  qs = Fantasy.objects.filter(player_name = 'Kevin Durant').order_by('-period_id')
+  player_name = request.GET['player_name']
+  qs = Fantasy.objects.filter(player_name = player_name).order_by('-period_id')
   return render(request, "players.html", {"players" : qs})
