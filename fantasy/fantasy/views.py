@@ -84,27 +84,27 @@ def team_player_average_total_on_team(request):
   return render(request, "teams.html", {"teams" : tables})
 
 def per_minute_fpts(request):
-    query = """SELECT player_name, ROUND(CAST(CAST(total_fpts as float)/total_min as numeric),3) as per_minute_fpts
-               FROM (SELECT player_name, SUM(fpts) as total_fpts, SUM(min) as total_min
-                     FROM fantasy
-                     GROUP BY player_name) as totals
-               WHERE total_min > 48
-               ORDER BY per_minute_fpts DESC;"""
-    table = PerMinuteTable(Fantasy.objects.raw(query))
-    RequestConfig(request).configure(table)
-    return render(request, "players.html", {"players": table})
+  query = """SELECT player_name, ROUND(CAST(CAST(total_fpts as float)/total_min as numeric),3) as per_minute_fpts
+             FROM (SELECT player_name, SUM(fpts) as total_fpts, SUM(min) as total_min
+                   FROM fantasy
+                   GROUP BY player_name) as totals
+             WHERE total_min > 48
+             ORDER BY per_minute_fpts DESC;"""
+  table = PerMinuteTable(Fantasy.objects.raw(query))
+  RequestConfig(request).configure(table)
+  return render(request, "players.html", {"players": table})
 
 def player_rankings(request):
-    query = """ SELECT *, RANK() OVER (ORDER BY avg_fpts DESC) as rank
-                FROM (SELECT F.player_name, ROUND(AVG(F.fpts),2) as avg_fpts, MAX(R.positions) as positions
-                     FROM fantasy F, roster R
-                     WHERE F.player_name = R.player_name
-                     GROUP BY F.player_name
-                     ORDER BY avg_fpts DESC) as subquery
-           """
-    table = RankingTable(Fantasy.objects.raw(query))
-    RequestConfig(request).configure(table)
-    return render(request, "players.html", {"players": table})
+  query = """ SELECT *, RANK() OVER (ORDER BY avg_fpts DESC) as rank
+              FROM (SELECT F.player_name, ROUND(AVG(F.fpts),2) as avg_fpts, MAX(R.positions) as positions
+                   FROM fantasy F, roster R
+                   WHERE F.player_name = R.player_name
+                   GROUP BY F.player_name
+                   ORDER BY avg_fpts DESC) as subquery
+         """
+  table = RankingTable(Fantasy.objects.raw(query))
+  RequestConfig(request).configure(table)
+  return render(request, "players.html", {"players": table})
 
 def per_position_rankings(request):
   tables = []
