@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models.query import QuerySet
+from django.db.models import Avg
 from django_tables2 import RequestConfig
 from fantasy.models import Fantasy
 from fantasy.tables import *
@@ -132,6 +133,7 @@ def individual_player(request):
   if request.method == 'GET' and 'player_name' in request.GET:
     player_name = request.GET['player_name']
     qs = Fantasy.objects.filter(player_name = player_name).order_by('-period_id')
-    return render(request, "players.html", {"players" : qs})
+    average = round(qs.aggregate(Avg('fpts'))['fpts__avg'],2)
+    return render(request, "players.html", {"players" : qs, "average" : average})
   else:
     return HttpResponse("Must Provide Player Name")
