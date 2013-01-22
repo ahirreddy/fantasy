@@ -9,9 +9,19 @@
 
 from django.db import models
 
-class Fantasy(models.Model):
-    player_name = models.TextField(blank=True, primary_key=True)
+class Roster(models.Model):
+    player_name = models.TextField(blank=True)
+    slot = models.TextField(blank=True)
     fteam = models.IntegerField(null=True, blank=True)
+    positions = models.TextField(blank=True)
+    class Meta:
+        db_table = u'roster'
+
+class Fantasy(models.Model):
+    player_name = models.TextField(primary_key=True)
+    team = models.TextField(blank=True)
+    fteam = models.IntegerField(null=True, blank=True)
+    min = models.IntegerField(null=True, blank=True)
     fgm = models.IntegerField(null=True, blank=True)
     fga = models.IntegerField(null=True, blank=True)
     ftm = models.IntegerField(null=True, blank=True)
@@ -22,10 +32,10 @@ class Fantasy(models.Model):
     blk = models.IntegerField(null=True, blank=True)
     tover = models.IntegerField(null=True, blank=True)
     pts = models.IntegerField(null=True, blank=True)
-    fpts = models.IntegerField(null=True, blank=True)
+    fpts = models.DecimalField(null=True, max_digits=65535, decimal_places=65535, blank=True)
     opp = models.TextField(blank=True)
     slot = models.TextField(blank=True)
-    period_id = models.IntegerField(null=True, blank=True)
+    period_id = models.IntegerField()
     class Meta:
         db_table = u'fantasy'
 
