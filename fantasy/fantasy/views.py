@@ -1,7 +1,9 @@
+import json
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models.query import QuerySet
 from django.db.models import Avg
+from django.db.models import Max
 from django_tables2 import RequestConfig
 from fantasy.models import Fantasy
 from fantasy.tables import *
@@ -134,6 +136,9 @@ def individual_player(request):
     player_name = request.GET['player_name']
     qs = Fantasy.objects.filter(player_name = player_name).order_by('-period_id')
     average = round(qs.aggregate(Avg('fpts'))['fpts__avg'],2)
-    return render(request, "player_charts.html", {"players" : qs, "average" : average})
+    periods = json.dumps([x['period_id'] for x in qs.values('period_id')][::-1])
+    fpts = json.dumps([float(x['fpts']) for x in qs.values('fpts')][::-1])
+
+    return render(request, "player_charts.html", {"players" : qs, "average" : average, "periods" : periods, "fpts" : fpts})
   else:
     return HttpResponse("Must Provide Player Name")
