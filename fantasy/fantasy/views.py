@@ -134,6 +134,6 @@ def individual_player(request):
     player_name = request.GET['player_name']
     qs = Fantasy.objects.filter(player_name = player_name).order_by('-period_id')
     average = round(qs.aggregate(Avg('fpts'))['fpts__avg'],2)
-    return render(request, "players.html", {"players" : qs, "average" : average})
+    return render(request, "player_charts.html", {"players" : qs, "average" : average})
   else:
     return HttpResponse("Must Provide Player Name")

@@ -1,0 +1,16 @@
+{# tutorial/templates/players.html #}
+{% load render_table from django_tables2 %}
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
+        <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}jqplot/jquery.jqplot.min.js"></script>
+        <link rel="stylesheet" href="{{ STATIC_URL }}jqplot/jquery.jqplot.min.css">
+    </head>
+    <body>
+        Average Fpts: {{ average }}
+        <br />
+        {% render_table players %}
+    </body>
+</html>
