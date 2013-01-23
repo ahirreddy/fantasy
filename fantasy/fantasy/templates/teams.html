@@ -14,7 +14,7 @@
         <h3>Team {{ team_id }}</h3>
         <h2>{{ team_average }}</h2>
         {% render_table data %}
-        <div id="{{ team_id }}"></div>
+        <div id="{{ team_id }}" style="height : 500px"></div>
         <script type="text/javascript">
         $(document).ready(function(){
           {% autoescape off %}
@@ -32,7 +32,7 @@
                   showDataLabels: true
                 }
               },
-              legend: { show:true, location: 'e' }
+              legend: { show:true, location: 'w' }
             }
           );
         });
