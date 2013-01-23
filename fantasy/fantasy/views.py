@@ -61,17 +61,16 @@ def team_player_average_total(request):
                GROUP BY F.player_name
                ORDER BY avg_fpts DESC""" % team_id
     qs = Fantasy.objects.raw(query)
-    avg_total = 0
-    for p in qs:
-      avg_total += p.avg_fpts
+    avg_total = sum([p.avg_fpts for p in qs])
+    fpts = json.dumps([ [x.player_name, float(x.avg_fpts)] for x in qs])
     table = PlayerAveragesTable(qs)
     RequestConfig(request).configure(table)
-    fpts = json.dumps([ [x.player_name, float(x.avg_fpts)] for x in qs])
     teams.append((team_id, avg_total, table, fpts))
+
   return render(request, "teams.html", {"teams" : teams})
 
 def team_player_average_total_on_team(request):
-  tables = []
+  teams = []
   for team_id in xrange(1,9):
     query = """SELECT F.player_name as player_name, ROUND(AVG(F.fpts),2) as avg_fpts,
                       COUNT(*) as num_games
@@ -82,11 +81,12 @@ def team_player_average_total_on_team(request):
                GROUP BY F.player_name""" % (team_id, team_id)
     qs = Fantasy.objects.raw(query)
     avg_total = sum([p.avg_fpts for p in qs])
+    fpts = json.dumps([ [x.player_name, float(x.avg_fpts)] for x in qs])
     table = PlayerAveragesTable(qs)
     RequestConfig(request).configure(table)
-    tables.append(("team%i" % team_id, avg_total, table))
+    teams.append((team_id, avg_total, table, fpts))
 
-  return render(request, "teams.html", {"teams" : tables})
+  return render(request, "teams.html", {"teams" : teams})
 
 def per_minute_fpts(request):
   query = """SELECT player_name, ROUND(CAST(CAST(total_fpts as float)/total_min as numeric),3) as per_minute_fpts
