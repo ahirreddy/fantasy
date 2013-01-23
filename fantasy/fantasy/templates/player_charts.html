@@ -19,8 +19,12 @@
                     rendererOptions: {fillToZero: true}
                 },
                 series:[
-                    {label:'Fpts'},
-                ],
+                    {label:'Fpts',
+                     pointLabels:{
+                      show: true,
+                      labels: {{ fpts }}
+                     }
+                }],
                 legend: {
                     show: true,
                     placement: 'outsideGrid'
