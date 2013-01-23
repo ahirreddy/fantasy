@@ -31,8 +31,10 @@
                         ticks: ticks
                     },
                     yaxis: {
-                        pad: 1.05,
-                        tickOptions: {formatString: '%d'}
+                      min: 0,
+                      max: 70,
+                      numberTicks:8,
+                      tickRenderer: $.jqplot.CanvasAxisTickRenderer,
                     }
                 }
             });
