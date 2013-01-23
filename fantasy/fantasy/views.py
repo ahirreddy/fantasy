@@ -51,7 +51,7 @@ def multiple_team_players(request):
   return render(request, "players.html", {"players": table})
 
 def team_player_average_total(request):
-  tables = []
+  teams = []
   for team_id in xrange(1,9):
     query = """SELECT F.player_name as player_name, ROUND(AVG(F.fpts),2) as avg_fpts,
                       COUNT(*) as num_games
@@ -65,8 +65,9 @@ def team_player_average_total(request):
       avg_total += p.avg_fpts
     table = PlayerAveragesTable(qs)
     RequestConfig(request).configure(table)
-    tables.append(("team%i" % team_id, avg_total, table))
-  return render(request, "teams.html", {"teams" : tables})
+
+    teams.append((team_id, avg_total, table))
+  return render(request, "teams.html", {"teams" : teams})
 
 def team_player_average_total_on_team(request):
   tables = []
