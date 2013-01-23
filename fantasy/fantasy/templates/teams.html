@@ -10,32 +10,31 @@
         <script type="text/javascript" src="{{ STATIC_URL }}jqplot/plugins/jqplot.donutRenderer.min.js"></script>
     </head>
     <body>
-      {% for team_id, team_average, data in teams %}
+      {% for team_id, team_average, data, fpts in teams %}
         <h3>Team {{ team_id }}</h3>
         <h2>{{ team_average }}</h2>
         {% render_table data %}
-        <div id="team{{ team_id }}"></div>
+        <div id="{{ team_id }}"></div>
         <script type="text/javascript">
         $(document).ready(function(){
-          var s1 = [['a',6], ['b',8], ['c',14], ['d',20]];
-          var s2 = [['a', 8], ['b', 12], ['c', 6], ['d', 9]];
+          {% autoescape off %}
+          var data = {{ fpts }}
+          {% endautoescape %}
 
-          var plot3 = $.jqplot('team{{ team_id }}', [s1, s2], {
-            seriesDefaults: {
-              // make this a donut chart.
-              renderer:$.jqplot.DonutRenderer,
-              rendererOptions:{
-                // Donut's can be cut into slices like pies.
-                sliceMargin: 3,
-                // Pies and donuts can start at any arbitrary angle.
-                startAngle: -90,
-                showDataLabels: true,
-                // By default, data labels show the percentage of the donut/pie.
-                // You can show the data 'value' or data 'label' instead.
-                dataLabels: 'value'
-              }
+          var plot1 = jQuery.jqplot ('{{ team_id }}', [data],
+            {
+              seriesDefaults: {
+                // Make this a pie chart.
+                renderer: jQuery.jqplot.PieRenderer,
+                rendererOptions: {
+                  // Put data labels on the pie slices.
+                  // By default, labels show the percentage of the slice.
+                  showDataLabels: true
+                }
+              },
+              legend: { show:true, location: 'e' }
             }
-          });
+          );
         });
         </script>
       {% endfor %}
