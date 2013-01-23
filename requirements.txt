@@ -6,3 +6,4 @@ django-dajaxice==0.5.4.1
 django-tables2==0.13.0
 psycopg2==2.4.6
 wsgiref==0.1.2
+gunicorn==0.16.1
