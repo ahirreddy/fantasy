@@ -78,7 +78,8 @@ def team_player_average_total_on_team(request):
                WHERE F.player_name = R.player_name
                      AND R.fteam = %i
                      AND F.fteam = %i
-               GROUP BY F.player_name""" % (team_id, team_id)
+               GROUP BY F.player_name
+               ORDER BY avg_fpts DESC""" % (team_id, team_id)
     qs = Fantasy.objects.raw(query)
     avg_total = sum([p.avg_fpts for p in qs])
     fpts = json.dumps([ [x.player_name, float(x.avg_fpts)] for x in qs])
