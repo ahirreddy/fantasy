@@ -1,5 +1,7 @@
 # Django settings for fantasy project.
 
+import os
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
