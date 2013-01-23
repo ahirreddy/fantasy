@@ -141,7 +141,6 @@ def individual_player(request):
     average = round(qs.aggregate(Avg('fpts'))['fpts__avg'],2)
     periods = json.dumps([x['period_id'] for x in qs.values('period_id')][::-1])
     fpts = json.dumps([float(x['fpts']) for x in qs.values('fpts')][::-1])
-
     return render(request, "player_charts.html", {"players" : qs, "average" : average, "periods" : periods, "fpts" : fpts})
   else:
     return HttpResponse("Must Provide Player Name")
