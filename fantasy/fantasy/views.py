@@ -117,7 +117,7 @@ def per_position_rankings(request):
                       SELECT F.player_name, ROUND(AVG(F.fpts),2) as avg_fpts, MAX(R.positions) as positions
                       FROM fantasy F, roster R
                       WHERE F.player_name = R.player_name
-                            AND R.positions LIKE '%%{0}%%'
+                            AND substring(R.positions from '.$|..$|.,|..,') LIKE '%%{0}%%'
                       GROUP BY F.player_name
                       ORDER BY avg_fpts DESC
                      ) as subquery
